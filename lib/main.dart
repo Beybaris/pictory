@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pictory/screens/root_page.dart';
 import 'package:provider/provider.dart';
 import 'providers/photo_provider.dart';
 import 'screens/home_page.dart';

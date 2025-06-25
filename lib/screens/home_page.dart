@@ -1,17 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:pictory/screens/favorites_page.dart';
 import 'package:provider/provider.dart';
 import '../providers/photo_provider.dart';
 import '../widgets/photo_card.dart';
 
-class HomePage extends StatelessWidget {
+// class HomePage extends StatelessWidget {
+//   const HomePage({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final provider = Provider.of<PhotoProvider>(context);
+
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       appBar: AppBar(
+//         backgroundColor: Colors.black,
+//         title: const Text.rich(
+//           TextSpan(
+//             children: [
+//               TextSpan(
+//                 text: 'ART ',
+//                 style: TextStyle(
+//                   color: Colors.yellow,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//               TextSpan(
+//                 text: 'GALLERY',
+//                 style: TextStyle(color: Colors.white),
+//               ),
+//             ],
+//           ),
+//         ),
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.favorite_border, color: Colors.white),
+//             onPressed: () {
+//               // Переход в избранное (реализуем позже)
+//             },
+//           ),
+//         ],
+//       ),
+//       body: provider.photos.isEmpty
+//           ? const Center(child: CircularProgressIndicator())
+//           : RefreshIndicator(
+//               onRefresh: () => provider.fetchRandomPhotos(),
+//               child: ListView.builder(
+//                 padding: const EdgeInsets.all(16),
+//                 itemCount: provider.photos.length,
+//                 itemBuilder: (context, index) {
+//                   final photo = provider.photos[index];
+//                   return PhotoCard(photo: photo);
+//                 },
+//               ),
+//             ),
+//     );
+//   }
+// }
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => context.read<PhotoProvider>().fetchRandomPhotos());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<PhotoProvider>(context);
+    final provider = context.watch<PhotoProvider>();
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const Text.rich(
@@ -35,21 +99,24 @@ class HomePage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.favorite_border, color: Colors.white),
             onPressed: () {
-              // Переход в избранное (реализуем позже)
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const FavoritesPage()),
+              );
             },
           ),
         ],
       ),
-      body: provider.photos.isEmpty
+      body: provider.isLoading && provider.photos.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
-              onRefresh: () => provider.loadRandomPhotos(),
+              onRefresh: () =>
+                  context.read<PhotoProvider>().fetchRandomPhotos(),
               child: ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: provider.photos.length,
                 itemBuilder: (context, index) {
-                  final photo = provider.photos[index];
-                  return PhotoCard(photo: photo);
+                  return PhotoCard(photo: provider.photos[index]);
                 },
               ),
             ),
