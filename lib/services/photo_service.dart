@@ -20,4 +20,19 @@ class PhotoService {
       throw Exception('Ошибка загрузки фото');
     }
   }
+
+  Future<List<PhotoModel>> searchPhotos(String query) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/search/photos?query=$query&per_page=20'),
+      headers: {'Authorization': 'Client-ID $_accessKey'},
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final List results = data['results'];
+      return results.map((json) => PhotoModel.fromJson(json)).toList();
+    } else {
+      throw Exception('Ошибка при поиске фотографий');
+    }
+  }
 }

@@ -85,9 +85,14 @@ class PhotoDetailPage extends StatelessWidget {
 
                 /// Сердце
                 IconButton(
-                  icon: const Icon(Icons.favorite_border),
+                  icon: Icon(
+                    context.watch<PhotoProvider>().isFavorite(photo)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: Colors.red,
+                  ),
                   onPressed: () {
-                    // TODO: добавить в избранное
+                    context.read<PhotoProvider>().toggleFavorite(photo);
                   },
                 ),
 

@@ -12,6 +12,34 @@ class PhotoProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  List<PhotoModel> _searchResults = [];
+  bool _isSearching = false;
+
+  List<PhotoModel> get searchResults => _searchResults;
+  bool get isSearching => _isSearching;
+
+  Future<void> searchPhotos(String query) async {
+    _isLoading = true;
+    _isSearching = true;
+    notifyListeners();
+
+    try {
+      final results = await PhotoService().searchPhotos(query);
+      _searchResults = results;
+    } catch (e) {
+      print('Ошибка при поиске: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  void clearSearch() {
+    _searchResults.clear();
+    _isSearching = false;
+    notifyListeners();
+  }
+
   Future<void> fetchRandomPhotos() async {
     _isLoading = true;
     notifyListeners();
