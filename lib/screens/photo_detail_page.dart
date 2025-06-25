@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pictory/screens/search_page.dart';
+import 'package:pictory/utils/save_image.dart';
 import '../models/photo_model.dart';
 import 'package:provider/provider.dart';
 import '../providers/photo_provider.dart';
@@ -34,7 +36,13 @@ class PhotoDetailPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.search, color: Colors.white),
-            onPressed: () {}, // Поиск позже
+            onPressed: () {
+              //поиск
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(
@@ -44,6 +52,7 @@ class PhotoDetailPage extends StatelessWidget {
               color: Colors.red,
             ),
             onPressed: () {
+              // в избранное
               context.read<PhotoProvider>().toggleFavorite(photo);
             },
           ),
@@ -105,7 +114,10 @@ class PhotoDetailPage extends StatelessWidget {
                   child: IconButton(
                     icon: const Icon(Icons.download),
                     onPressed: () {
-                      // TODO: скачать фото
+                      saveImage(photo.url);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Скачивание началось...')),
+                      );
                     },
                   ),
                 ),
